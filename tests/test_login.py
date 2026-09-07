@@ -8,11 +8,12 @@ from selenium.webdriver.support import expected_conditions as EC
 
 BASE_URL = os.environ.get("BASE_URL", "http://localhost:8000")
 
-
 @pytest.fixture
 def driver():
     options = Options()
-    options.add_argument("--headless=new")
+    headless = os.environ.get("HEADLESS", "true").lower() != "false"
+    if headless:
+        options.add_argument("--headless=new")
     options.add_argument("--no-sandbox")
     options.add_argument("--disable-dev-shm-usage")
     options.add_argument("--window-size=1920,1080")
@@ -20,7 +21,6 @@ def driver():
     drv.implicitly_wait(5)  # small implicit wait as a safety net
     yield drv
     drv.quit()
-
 
 def test_login_page_loads(driver):
     driver.get(BASE_URL)

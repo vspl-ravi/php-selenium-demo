@@ -44,7 +44,24 @@ jobs:
       - name: Run Selenium tests
         env:
           BASE_URL: http://localhost:8000
-        run: pytest tests/ -v --tb=short
+        run: |
+          pytest tests/ -v --tb=short \
+            --html=report.html --self-contained-html \
+            --junitxml=junit-report.xml
+
+      - name: Upload HTML test report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: selenium-html-report
+          path: report.html
+
+      - name: Upload JUnit XML report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: selenium-junit-report
+          path: junit-report.xml
 
       - name: Show PHP server log on failure
         if: failure()
